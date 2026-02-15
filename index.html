@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Be My Valentine 💖</title>
+</head>
+<body style="text-align:center; font-family:Arial; background:pink;">
+
+<h1 style="margin-top:100px;">Will You Be My Valentine? 💘</h1>
+
+<button onclick="alert('YAY!!! 💕')" 
+style="font-size:30px; padding:15px 30px; background:red; color:white;">
+YES
+</button>
+
+<button id="noBtn" 
+style="font-size:10px; padding:5px 10px; position:absolute;">
+no
+</button>
+
+<script>
+const noBtn = document.getElementById("noBtn");
+
+noBtn.addEventListener("mouseover", function() {
+    noBtn.style.left = Math.random() * window.innerWidth + "px";
+    noBtn.style.top = Math.random() * window.innerHeight + "px";
+});
+</script>
+
+</body>
+</html>
