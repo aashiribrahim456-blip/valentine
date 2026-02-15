@@ -1,28 +1,199 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Be My Valentine 💖</title>
+<title>Be My Valentine? 🎃</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+    body {
+        margin: 0;
+        height: 100vh;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #ff8c00, #ffb347);
+        text-align: center;
+        color: #4b2e00;
+    }
+
+    h1 {
+        margin-top: 12vh;
+        font-size: clamp(2rem, 5vw, 3rem);
+        text-shadow: 1px 1px 3px #7a4900;
+    }
+
+    button {
+        position: absolute;
+        padding: 15px 30px;
+        border: none;
+        cursor: pointer;
+        border-radius: 50px;
+        transition: all 0.2s ease;
+        font-weight: bold;
+    }
+
+    #yesBtn {
+        font-size: 2rem;
+        background: #d35400;
+        color: white;
+        left: 40%;
+        top: 50%;
+        box-shadow: 0 0 20px #d35400;
+    }
+
+    #yesBtn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 40px #e67e22;
+    }
+
+    #noBtn {
+        font-size: 0.9rem;
+        background: #8b4513;
+        color: white;
+        left: 60%;
+        top: 55%;
+    }
+
+    #taunt {
+        position: absolute;
+        top: 65%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-weight: bold;
+        opacity: 0;
+        transition: opacity 0.25s;
+    }
+
+    /* Reveal animation */
+    #wowContainer {
+        margin-top: 8vh;
+        animation: reveal 0.6s ease forwards;
+    }
+
+    @keyframes reveal {
+        from { opacity: 0; transform: scale(0.9); }
+        to   { opacity: 1; transform: scale(1); }
+    }
+
+    #wowImg {
+        max-width: 80vw;
+        max-height: 70vh;
+        border-radius: 15px;
+        box-shadow: 0 0 20px #7a4900;
+        margin-top: 10px;
+    }
+
+    /* Confetti */
+    .confetti {
+        position: fixed;
+        top: -10px;
+        width: 8px;
+        height: 14px;
+        opacity: 0.9;
+        animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+        to {
+            transform: translateY(110vh) rotate(720deg);
+            opacity: 0;
+        }
+    }
+</style>
 </head>
-<body style="text-align:center; font-family:Arial; background:pink;">
 
-<h1 style="margin-top:100px;">Will You Be My Valentine? 💘</h1>
+<body>
 
-<button onclick="alert('YAY!!! 💕')" 
-style="font-size:30px; padding:15px 30px; background:red; color:white;">
-YES
-</button>
+<h1>Will You Be My Valentine? 🎃</h1>
 
-<button id="noBtn" 
-style="font-size:10px; padding:5px 10px; position:absolute;">
-no
-</button>
+<button id="yesBtn">YES 🎃</button>
+<button id="noBtn">no</button>
+<div id="taunt"></div>
 
 <script>
 const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+const taunt = document.getElementById("taunt");
 
-noBtn.addEventListener("mouseover", function() {
-    noBtn.style.left = Math.random() * window.innerWidth + "px";
-    noBtn.style.top = Math.random() * window.innerHeight + "px";
+let noScale = 1;
+
+const taunts = [
+    "catch me 😏",
+    "nice try 😂",
+    "too slow 🏃",
+    "not today 😎",
+    "almost 😜",
+    "you missed 😆"
+];
+
+/* NO button escape logic */
+function moveNoButton() {
+    const maxX = window.innerWidth - noBtn.offsetWidth;
+    const maxY = window.innerHeight - noBtn.offsetHeight;
+
+    noBtn.style.left = Math.random() * maxX + "px";
+    noBtn.style.top = Math.random() * maxY + "px";
+
+    // shrink slightly each time
+    noScale *= 0.92;
+    noBtn.style.transform = `scale(${Math.max(noScale, 0.35)})`;
+
+    // teasing text
+    taunt.textContent = taunts[Math.floor(Math.random() * taunts.length)];
+    taunt.style.opacity = 1;
+    setTimeout(() => taunt.style.opacity = 0, 800);
+}
+
+noBtn.addEventListener("pointerenter", moveNoButton);
+
+/* Simple pop sound */
+function playPop() {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = "triangle";
+    osc.frequency.setValueAtTime(400, ctx.currentTime);
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start();
+    osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.2);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+    osc.stop(ctx.currentTime + 0.2);
+}
+
+/* Confetti */
+function createConfetti() {
+    const colors = ["#ff4d4d", "#ffd700", "#4dd2ff", "#7dff7d", "#ff66cc"];
+
+    for (let i = 0; i < 90; i++) {
+        const c = document.createElement("div");
+        c.className = "confetti";
+        c.style.left = Math.random() * window.innerWidth + "px";
+        c.style.background = colors[Math.floor(Math.random() * colors.length)];
+        c.style.animationDuration = (2 + Math.random() * 2) + "s";
+
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 4000);
+    }
+}
+
+/* YES reveal */
+yesBtn.addEventListener("click", () => {
+    playPop();
+    createConfetti();
+
+    document.body.innerHTML = `
+        <div id="wowContainer">
+            <h1 style="color:#4b2e00; text-shadow:1px 1px 3px #7a4900;">
+                YOU LUCKY WOMAN!! 😎
+            </h1>
+
+            <img id="wowImg" src="IMG_5813.JPG" alt="Lucky image">
+        </div>
+    `;
 });
 </script>
 
